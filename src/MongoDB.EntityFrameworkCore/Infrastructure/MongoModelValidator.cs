@@ -52,7 +52,7 @@ public class MongoModelValidator : ModelValidator
         ValidateElementNames(model, logger);
         ValidateNoShadowProperties(model, logger);
         ValidateNoMutableKeys(model, logger);
-        ValidatePrimaryKeys(model, logger);
+        // ValidatePrimaryKeys(model, logger);
     }
 
     /// <summary>
