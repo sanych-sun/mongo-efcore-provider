@@ -52,7 +52,7 @@ public class MongoModelValidator : ModelValidator
         ValidateElementNames(model, logger);
         ValidateNoShadowProperties(model, logger);
         ValidateNoMutableKeys(model, logger);
-        // ValidatePrimaryKeys(model, logger);
+        ValidatePrimaryKeys(model, logger);
     }
 
     /// <summary>
@@ -98,8 +98,7 @@ public class MongoModelValidator : ModelValidator
         var primaryKey = entityType.FindPrimaryKey();
         if (primaryKey == null || primaryKey.Properties.Count == 0)
         {
-            throw new InvalidOperationException(
-                $"The entity type '{entityType.DisplayName()}' is a root document but does not have a primary key set.");
+            return;
         }
 
         if (primaryKey.Properties.Count == 1)
