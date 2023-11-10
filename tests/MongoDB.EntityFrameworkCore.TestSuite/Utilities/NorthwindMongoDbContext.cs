@@ -1,5 +1,7 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
+using MongoDB.EntityFrameworkCore.Metadata.Conventions;
 
 namespace MongoDB.EntityFrameworkCore.TestSuite.Utilities;
 
@@ -20,5 +22,6 @@ public class NorthwindMongoDbContext : NorthwindContext
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         base.ConfigureConventions(configurationBuilder);
+        configurationBuilder.Conventions.Add(_=>new DateTimeKindConvention(DateTimeKind.Local));
     }
 }
