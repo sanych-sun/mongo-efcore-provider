@@ -16,6 +16,7 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Clusters;
 
 namespace MongoDB.EntityFrameworkCore.FunctionalTests.Utilities;
 
@@ -71,6 +72,22 @@ public class TemporaryDatabaseFixture : IDisposable, IAsyncDisposable
 
         MongoDatabase.CreateCollection(name);
         return MongoDatabase.GetCollection<T>(name);
+    }
+
+    public ClusterType GetClusterType()
+    {
+        if (Client.Cluster.Description.Type == ClusterType.Unknown)
+        {
+            using var _ = Client.ListDatabaseNames();
+
+            var clusterTypeIsKnown = SpinWait.SpinUntil(() => Client.Cluster.Description.Type != ClusterType.Unknown, TimeSpan.FromSeconds(10));
+            if (!clusterTypeIsKnown)
+            {
+                throw new InvalidOperationException($"Unable to determine cluster type: {Client.Cluster.Description}.");
+            }
+        }
+
+        return Client.Cluster.Description.Type;
     }
 
     public IMongoCollection<T> GetExistingTemporaryCollection<T>([CallerMemberName] string? name = null)

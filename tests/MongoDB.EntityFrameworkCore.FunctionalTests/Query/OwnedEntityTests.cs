@@ -15,6 +15,7 @@
 
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using MongoDB.Bson;
+using MongoDB.Driver.Core.Clusters;
 using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace MongoDB.EntityFrameworkCore.FunctionalTests.Query;
@@ -27,9 +28,11 @@ public class OwnedEntityTests : IClassFixture<TemporaryDatabaseFixture>
     public OwnedEntityTests(TemporaryDatabaseFixture tempDatabase)
         => _tempDatabase = tempDatabase;
 
-    [Fact]
+    [SkippableFact]
     public void OwnedEntity_nested_one_level_materializes_single()
     {
+        Skip.IfNot(_tempDatabase.GetClusterType() == ClusterType.ReplicaSet);
+
         var collection = _tempDatabase.CreateTemporaryCollection<PersonWithLocation>();
         collection.WriteTestDocs(PersonWithLocation1);
         using var db = SingleEntityDbContext.Create(collection);
